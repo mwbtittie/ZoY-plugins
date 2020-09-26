@@ -215,18 +215,18 @@ public class cursealchPlugin extends Plugin {
 				{
 					return;
 				}
-				timeout = tickDelay();
+				timeout = 4;
 				break;
 			case NPC_NOT_FOUND:
 				log.debug("NPC not found");
-				timeout = 4 + tickDelay();
+				timeout = 4;
 				break;
 			case Alch_ITEM:
 				entry = new MenuEntry("Cast", "", targetItem.getId(), MenuOpcode.ITEM_USE_ON_WIDGET.getId(), targetItem.getIndex(), 9764864, true);
 				utils.oneClickCastSpell(WidgetInfo.SPELL_HIGH_LEVEL_ALCHEMY, entry, targetItem.getCanvasBounds().getBounds(), sleepDelay());
 				doalch = false;
 				dostun = true;
-				timeout = tickDelay();
+				timeout = 3;
 				break;
 		}
 	}
@@ -265,13 +265,6 @@ public class cursealchPlugin extends Plugin {
 	{
 		sleepLength = utils.randomDelay(config.sleepWeightedDistribution(), config.sleepMin(), config.sleepMax(), config.sleepDeviation(), config.sleepTarget());
 		return sleepLength;
-	}
-
-	private int tickDelay()
-	{
-		int tickLength = (int) utils.randomDelay(config.tickDelayWeightedDistribution(), config.tickDelayMin(), config.tickDelayMax(), config.tickDelayDeviation(), config.tickDelayTarget());
-		log.debug("tick delay for {} ticks", tickLength);
-		return tickLength;
 	}
 
 }
