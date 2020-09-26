@@ -1,6 +1,6 @@
-package net.runelite.client.plugins.stunalch;
+package net.runelite.client.plugins.cursealch;
 
-public enum stunalchState
+public enum cursealchState
     {
         IDLING,
         Curse_NPC,

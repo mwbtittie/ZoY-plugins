@@ -1,4 +1,4 @@
-package net.runelite.client.plugins.stunalch;
+package net.runelite.client.plugins.cursealch;
 
 import static net.runelite.api.MenuOpcode.RUNELITE_OVERLAY_CONFIG;
 import static net.runelite.client.ui.overlay.OverlayManager.OPTION_CONFIGURE;
@@ -21,16 +21,16 @@ import net.runelite.client.ui.overlay.components.table.TableComponent;
 
 @Slf4j
 @Singleton
-class stunalchnpcOverlay extends OverlayPanel
+class cursealchnpcOverlay extends OverlayPanel
 {
 
     private final Client client;
-    private final stunalchPlugin plugin;
-    private final stunalchConfig config;
+    private final cursealchPlugin plugin;
+    private final cursealchConfig config;
 
 
     @Inject
-    private stunalchnpcOverlay(final Client client, final stunalchPlugin plugin, final stunalchConfig config)
+    private cursealchnpcOverlay(final Client client, final cursealchPlugin plugin, final cursealchConfig config)
     {
         super(plugin);
         //setPosition(OverlayPosition.BOTTOM_LEFT);

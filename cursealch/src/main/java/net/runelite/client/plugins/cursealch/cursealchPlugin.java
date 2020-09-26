@@ -1,4 +1,4 @@
-package net.runelite.client.plugins.stunalch;
+package net.runelite.client.plugins.cursealch;
 
 import com.google.inject.Provides;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +20,7 @@ import net.runelite.api.MenuEntry;
 import net.runelite.api.events.GameTick;
 import net.runelite.client.plugins.botutils.BotUtils;
 import org.pf4j.Extension;
-import static net.runelite.client.plugins.stunalch.stunalchState.*;
+import static net.runelite.client.plugins.cursealch.cursealchState.*;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.ui.overlay.OverlayManager;
@@ -36,10 +36,10 @@ import java.time.Instant;
 		type = PluginType.PVM
 )
 @Slf4j
-public class stunalchPlugin extends Plugin {
+public class cursealchPlugin extends Plugin {
 
 
-	stunalchState state;
+	cursealchState state;
 
 	@Inject
 	private Client client;
@@ -51,16 +51,16 @@ public class stunalchPlugin extends Plugin {
 	private OverlayManager overlayManager;
 
 	@Inject
-	stunalchOverlay overlay;
+	cursealchOverlay overlay;
 
 	@Inject
-	stunalchnpcOverlay npcoverlay;
+	cursealchnpcOverlay npcoverlay;
 
 	@Inject
 	private ChatMessageManager chatMessageManager;
 
 	@Inject
-	private stunalchConfig config;
+	private cursealchConfig config;
 
 	public NPC splashNPC1;
 	protected static final java.util.Random random = new java.util.Random();
@@ -73,7 +73,7 @@ public class stunalchPlugin extends Plugin {
 	int itemID = -1;
 	int timeout = 0;
 	long sleepLength = 0;
-	boolean startstunalch;
+	boolean startcursealch;
 	Instant botTimer;
 	NPC splashNPC;
 	WidgetItem targetItem;
@@ -95,7 +95,7 @@ public class stunalchPlugin extends Plugin {
 		doalch = false;
 		dostun = false;
 		botTimer = null;
-		startstunalch = false;
+		startcursealch = false;
 		itemID = -1;
 		timeout = 0;
 		overlayManager.remove(overlay);
@@ -104,15 +104,15 @@ public class stunalchPlugin extends Plugin {
 	}
 
 	@Provides
-	stunalchConfig provideConfig(ConfigManager configManager)
+	cursealchConfig provideConfig(ConfigManager configManager)
 	{
-		return configManager.getConfig(stunalchConfig.class);
+		return configManager.getConfig(cursealchConfig.class);
 	}
 
 	@Subscribe
 	private void onConfigChanged(ConfigChanged event)
 	{
-		if (event.getGroup() != "StunAlcher")
+		if (event.getGroup() != "CurseAlcher")
 		{
 			return;
 		}
@@ -136,7 +136,7 @@ public class stunalchPlugin extends Plugin {
 	@Subscribe
 	private void onConfigButtonPressed(ConfigButtonClicked configButtonClicked)
 	{
-		if (!configButtonClicked.getGroup().equalsIgnoreCase("StunAlcher"))
+		if (!configButtonClicked.getGroup().equalsIgnoreCase("CurseAlcher"))
 		{
 			return;
 		}
@@ -144,9 +144,9 @@ public class stunalchPlugin extends Plugin {
 		switch (configButtonClicked.getKey())
 		{
 			case "startButton":
-				if (!startstunalch)
+				if (!startcursealch)
 				{
-					startstunalch = true;
+					startcursealch = true;
 					botTimer = Instant.now();
 					state = null;
 					timeout = 0;
@@ -157,7 +157,7 @@ public class stunalchPlugin extends Plugin {
 				}
 				else
 				{
-					startstunalch = false;
+					startcursealch = false;
 					doalch = false;
 					dostun = false;
 					utils.sendGameMessage("Stop Button Clicked, Plugin Stopping");
@@ -166,7 +166,7 @@ public class stunalchPlugin extends Plugin {
 		}
 	}
 
-	public stunalchState getState()
+	public cursealchState getState()
 	{
 		if (timeout > 0)
 		{
@@ -189,7 +189,7 @@ public class stunalchPlugin extends Plugin {
 
 	@Subscribe
 	public void onGameTick(GameTick event) {
-		if(!startstunalch){
+		if(!startcursealch){
 			return;
 		}
 		state = getState();
@@ -234,12 +234,12 @@ public class stunalchPlugin extends Plugin {
 	@Subscribe
 	private void onChatMessage(ChatMessage event){
 		if (event.getMessage().contains(OUT_OF_RUNES_MSG)){
-			startstunalch = false;
+			startcursealch = false;
 			utils.sendGameMessage("Out of runes! Stopping plugin");
 			return;
 		}
 		if (event.getMessage().contains(UNREACHABLE_MSG)){
-			startstunalch = false;
+			startcursealch = false;
 			utils.sendGameMessage("Failed to Reach NPC, Stopping plugin");
 			return;
 		}

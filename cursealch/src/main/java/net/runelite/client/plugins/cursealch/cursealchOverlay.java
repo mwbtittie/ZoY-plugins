@@ -1,4 +1,4 @@
-package net.runelite.client.plugins.stunalch;
+package net.runelite.client.plugins.cursealch;
 
 		import java.awt.*;
 		import java.time.Duration;
@@ -24,26 +24,25 @@ package net.runelite.client.plugins.stunalch;
 
 @Slf4j
 @Singleton
-class stunalchOverlay extends OverlayPanel
+class cursealchOverlay extends OverlayPanel
 {
 
     private final Client client;
-    private final stunalchPlugin plugin;
-    private final stunalchConfig config;
+    private final cursealchPlugin plugin;
+    private final cursealchConfig config;
 
     String timeFormat;
     private String infoStatus = "Starting...";
 
     @Inject
-    private stunalchOverlay(final Client client, final stunalchPlugin plugin, final stunalchConfig config)
+    private cursealchOverlay(final Client client, final cursealchPlugin plugin, final cursealchConfig config)
     {
         super(plugin);
         setPosition(OverlayPosition.BOTTOM_LEFT);
-		//this.setPosition(OverlayPosition.DYNAMIC);
         this.client = client;
         this.plugin = plugin;
         this.config = config;
-        getMenuEntries().add(new OverlayMenuEntry(RUNELITE_OVERLAY_CONFIG, OPTION_CONFIGURE, "Stun Alcher overlay"));
+        getMenuEntries().add(new OverlayMenuEntry(RUNELITE_OVERLAY_CONFIG, OPTION_CONFIGURE, "Curse Alcher overlay"));
     }
 
     @Override
@@ -61,14 +60,6 @@ class stunalchOverlay extends OverlayPanel
             if (!plugin.state.name().equals("TIMEOUT"))
                 infoStatus = plugin.state.name();
         }
-		/*if (this.plugin.splashNPC1 != null) {
-			clickbox = Perspective.getClickbox(this.client, this.plugin.splashNPC1.getModel(), this.plugin.splashNPC1.getOrientation(), this.plugin.splashNPC1.getLocalLocation());
-			if (clickbox != null) {
-				OverlayUtil.renderClickBox(graphics, this.mouse(), clickbox, Color.CYAN);
-			} else {
-				OverlayUtil.renderNpcOverlay(graphics, this.plugin.splashNPC1, Color.CYAN, 1, 100, 80, this.client);
-			}
-		}*/
 
         tableComponent.addRow("State:", infoStatus);
 
@@ -78,11 +69,10 @@ class stunalchOverlay extends OverlayPanel
 
         if (!tableComponent.isEmpty())
         {
-           // panelComponent.setBackgroundColor(ColorUtil.fromHex("#66000000")); //Material Dark default
             panelComponent.setPreferredSize(new Dimension(200,200));
             panelComponent.setBorder(new Rectangle(5,5,5,5));
             panelComponent.getChildren().add(TitleComponent.builder()
-                    .text("Stun Alcher")
+                    .text("Curse Alcher")
                     .color(Color.green)
                     .build());
             panelComponent.getChildren().add(tableComponent);

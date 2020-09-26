@@ -1,4 +1,4 @@
-package net.runelite.client.plugins.stunalch;
+package net.runelite.client.plugins.cursealch;
 
 import net.runelite.client.config.Button;
 import net.runelite.client.config.Config;
@@ -7,8 +7,8 @@ import net.runelite.client.config.ConfigItem;
 import net.runelite.client.config.Range;
 import net.runelite.client.config.ConfigSection;
 
-@ConfigGroup("StunAlcher")
-    public interface stunalchConfig extends Config{
+@ConfigGroup("CurseAlcher")
+    public interface cursealchConfig extends Config{
     @ConfigItem(
             keyName = "npcID",
             name = "NPC ID",

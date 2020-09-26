@@ -25,7 +25,7 @@
 
 rootProject.name = "ZoY Plugins"
 
-include(":stunalch")
+include(":cursealch")
 
 for (project in rootProject.children) {
     project.apply {

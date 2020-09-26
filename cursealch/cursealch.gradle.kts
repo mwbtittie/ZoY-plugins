@@ -27,8 +27,8 @@
 
 version = "0.0.1"
 
-project.extra["PluginName"] = "Stun Alch"
-project.extra["PluginDescription"] = "Auto Stun Alch"
+project.extra["PluginName"] = "Curse Alch"
+project.extra["PluginDescription"] = "Auto Curse Alch"
 
 
 dependencies {
