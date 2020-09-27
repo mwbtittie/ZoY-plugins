@@ -22,16 +22,16 @@ public interface gearswapperConfiguration extends Config
 		return false;
 	}
 	@ConfigItem(
-		keyName = "commandssets",
+		keyName = "commandets",
 		name = "",
 		description = "Instructions. Don't enter anything into this field",
 		position = 0,
 		section = "Config"
 	)
-	default String commandssets()
+	default String commandets()
 	{
 		return "ID:EQUIP || ID:REMOVE\nID:DROP || ID:EAT (Support Triple Eat)\nSPEC:ENABLE || SPEC:ENABLEON\n1:HITLASTTARGET (Player and NPC)\n1:MOVETOTARGET (Only Players)"+
-			"[EX]\nProtect From Melee:PRAY\nVeng:CASTSPELL\nStun:LEFTCLICKCAST";
+			"\n[EX]\nProtect From Melee:PRAY\nVeng:CASTSPELL\nStun:LEFTCLICKCAST";
 	}
 	@ConfigItem(
 		keyName = "randLow",
