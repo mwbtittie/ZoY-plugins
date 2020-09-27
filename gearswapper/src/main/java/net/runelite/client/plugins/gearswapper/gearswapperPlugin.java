@@ -221,8 +221,10 @@ public class gearswapperPlugin extends Plugin
 		final Map<String, String> map = new LinkedHashMap<>();
 		final List<WidgetItem> equipitemids = new ArrayList<>();
 		final List<WidgetItem> foodids = new ArrayList<>();
-		final Iterable<String> tmp = NEWLINE_SPLITTER.split(string);
+		final List<WidgetItem> inventoryItems = new ArrayList<>();
 		final List<Integer> playerEquipment = new ArrayList<>();
+		WidgetItem dropitem = null;
+		final Iterable<String> tmp = NEWLINE_SPLITTER.split(string);
 		for (String s : tmp)
 		{
 			if (s.startsWith("//"))
@@ -283,30 +285,8 @@ public class gearswapperPlugin extends Plugin
 				break;
 				case "drop":
 				{
-					WidgetItem dropitem = utils.getInventoryWidgetItem(Integer.parseInt(param));
-					Collection<WidgetItem> inventoryItems = utils.getAllInventoryItems();
-					{
-						executorService.submit(() ->
-						{
-							for (WidgetItem item : inventoryItems)
-							{
-								if (dropitem.getId() == item.getId()) //6512 is empty widget slot
-								{
-									utils.setMenuEntry(new MenuEntry("", "", item.getId(), MenuOpcode.ITEM_FIFTH_OPTION.getId(), item.getIndex(), WidgetInfo.INVENTORY.getId(),
-										false));
-									utils.click(item.getCanvasBounds());
-									try
-									{
-										Thread.sleep((int) getMillis());
-									}
-									catch (InterruptedException e)
-									{
-										e.printStackTrace();
-									}
-								}
-							}
-						});
-					}
+					dropitem = utils.getInventoryWidgetItem(Integer.parseInt(param));
+					inventoryItems.addAll(utils.getAllInventoryItems());
 				}
 				break;
 				case "eat":
@@ -474,6 +454,9 @@ public class gearswapperPlugin extends Plugin
 				break;
 			}
 		}
+
+		WidgetItem finalDropitem = dropitem;
+
 		executorService.submit(() ->
 		{
 			for (WidgetItem item : foodids)
@@ -518,6 +501,23 @@ public class gearswapperPlugin extends Plugin
 					e.printStackTrace();
 				}
 			}
+					for (WidgetItem item : inventoryItems)
+					{
+						if (finalDropitem.getId() == item.getId()) //6512 is empty widget slot
+						{
+							utils.setMenuEntry(new MenuEntry("", "", item.getId(), MenuOpcode.ITEM_FIFTH_OPTION.getId(), item.getIndex(), WidgetInfo.INVENTORY.getId(),
+								false));
+							utils.click(item.getCanvasBounds());
+							try
+							{
+								Thread.sleep((int) getMillis());
+							}
+							catch (InterruptedException e)
+							{
+								e.printStackTrace();
+							}
+						}
+					}
 
 		});
 	}
