@@ -11,6 +11,7 @@ import com.google.inject.Provides;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,7 @@ import net.runelite.api.MenuEntry;
 import net.runelite.api.MenuOpcode;
 import net.runelite.api.NPC;
 import net.runelite.api.Player;
+import net.runelite.api.Prayer;
 import net.runelite.api.VarPlayer;
 import net.runelite.api.events.CommandExecuted;
 import net.runelite.api.events.GameStateChanged;
@@ -129,9 +131,9 @@ public class gearswapperPlugin extends Plugin
 	@Override
 	protected void shutDown()
 	{
-		keyManager.registerKeyListener(one);
-		keyManager.registerKeyListener(two);
-		keyManager.registerKeyListener(three);
+		keyManager.unregisterKeyListener(one);
+		keyManager.unregisterKeyListener(two);
+		keyManager.unregisterKeyListener(three);
 	}
 
 	private final HotkeyListener one = new HotkeyListener(() -> config.customOne())
@@ -222,8 +224,16 @@ public class gearswapperPlugin extends Plugin
 		final List<WidgetItem> equipitemids = new ArrayList<>();
 		final List<WidgetItem> foodids = new ArrayList<>();
 		final List<WidgetItem> inventoryItems = new ArrayList<>();
+		final List<WidgetInfo> widgetlist = new ArrayList<>();
+		final List<WidgetInfo> widgetlist1 = new ArrayList<>();
+		final List<Widget> widg = new ArrayList<>();
+		final List<Widget> widg1 = new ArrayList<>();
 		final List<Integer> playerEquipment = new ArrayList<>();
+		final List<Actor> lasttarg = new ArrayList<>();
+		final List<Actor> movetarg = new ArrayList<>();
 		WidgetItem dropitem = null;
+		WidgetInfo widgetinfo = null;
+		WidgetInfo widgetinfo1 = null;
 		final Iterable<String> tmp = NEWLINE_SPLITTER.split(string);
 		for (String s : tmp)
 		{
@@ -253,13 +263,7 @@ public class gearswapperPlugin extends Plugin
 			{
 				case "equip":
 				{
-					WidgetItem item = utils.getInventoryWidgetItem(Integer.parseInt(param));
-					if (item == null)
-					{
-						log.debug("Equip: Can't find valid bounds for param {}.", param);
-						continue;
-					}
-					equipitemids.add(item);
+					equipitemids.add(utils.getInventoryWidgetItem(Integer.parseInt(param)));
 				}
 				break;
 				case "remove":
@@ -291,165 +295,42 @@ public class gearswapperPlugin extends Plugin
 				break;
 				case "eat":
 				{
-					WidgetItem item = utils.getInventoryWidgetItem(Integer.parseInt(param));
-					if (item == null)
-					{
-						log.debug("eat: Can't find valid bounds for param {}.", param);
-						continue;
-					}
-					foodids.add(item);
+					foodids.add(utils.getInventoryWidgetItem(Integer.parseInt(param)));
 				}
 				break;
 				case "pray":
 				{
-					final WidgetInfo info = getPrayerWidgetInfo(param);
-
-					if (info == null)
-					{
-						log.debug("Prayer: Can't find valid widget info for param {}.", param);
-						continue;
+					widgetlist.add(getPrayerWidgetInfo(param));
 					}
-
-					final Widget widget = client.getWidget(info);
-
-					if (widget == null)
-					{
-						log.debug("Prayer: Can't find valid widget for param {}.", param);
-						continue;
-					}
-					utils.setMenuEntry(new MenuEntry("", "", 1, 57, widget.getItemId(), widget.getId(),
-						false));
-					utils.click(client.getMouseCanvasPosition());
-				}
 				break;
 				case "castspell":
 				{
-					final WidgetInfo info = getSpellWidgetInfo(param);
-
-					if (info == null)
-					{
-						log.debug("Cast: Can't find valid widget info for param {}.", param);
-						continue;
-					}
-
-					final Widget widget = client.getWidget(info);
-
-					if (widget == null)
-					{
-						log.debug("Cast: Can't find valid widget for param {}.", param);
-						continue;
-					}
-					utils.setMenuEntry(new MenuEntry("", "", 1, 57, widget.getItemId(), widget.getId(),
-						false));
-					utils.click(client.getMouseCanvasPosition());
+					widgetlist.add(getSpellWidgetInfo(param));
 				}
 				break;
 				case "leftclickcast":
 				{
-					final WidgetInfo info = getSpellWidgetInfo(param);
-
-					if (info == null)
-					{
-						log.debug("Cast: Can't find valid widget info for param {}.", param);
-						continue;
-					}
-
-					final Widget widget = client.getWidget(info);
-
-					if (widget == null)
-					{
-						log.debug("Cast: Can't find valid widget for param {}.", param);
-						continue;
-					}
-					utils.setMenuEntry(new MenuEntry("", "", 1, 25, widget.getItemId(), widget.getId(),
-						false));
-					utils.click(client.getMouseCanvasPosition());
+					widgetlist1.add(getSpellWidgetInfo(param));
 				}
 				break;
 				case "enable":
 				{
-					final Widget widget = client.getWidget(593, 36);
-					if (widget == null)
-					{
-						log.debug("Spec: Can't find valid widget");
-						continue;
-					}
-					utils.setMenuEntry(new MenuEntry("", "", 1, 57, -1, widget.getId(),
-						false));
-					utils.click(client.getMouseCanvasPosition());
+					widg.add(client.getWidget(593, 36));
 				}
 				break;
 				case "enableon":
 				{
-					final Widget widget = client.getWidget(593, 36);
-					if (widget == null)
-					{
-						log.debug("Spec: Can't find valid widget");
-						continue;
-					}
-					if (client.getVar(VarPlayer.SPECIAL_ATTACK_ENABLED) != 1)
-					{
-						utils.setMenuEntry(new MenuEntry("", "", 1, 57, -1, widget.getId(),
-							false));
-						utils.click(client.getMouseCanvasPosition());
-						continue;
-					}
+					widg1.add(client.getWidget(593, 36));
 				}
 				break;
 				case "hitlasttarget":
 				{
-					final Actor lastTarget = getLastTarget();
-					if (lastTarget == null)
-					{
-						continue;
-					}
-					if (lastTarget instanceof NPC)
-					{
-						final NPC npcTarget = new NPCQuery().idEquals(new int[]{((NPC) lastTarget).getId()}).result(client).first();
-						if (npcTarget == null)
-						{
-							continue;
-						}
-						utils.setMenuEntry(new MenuEntry("", "", ((NPC) lastTarget).getIndex(), client.isSpellSelected() ? MenuOpcode.SPELL_CAST_ON_NPC.getId() : MenuOpcode.NPC_SECOND_OPTION.getId(), 0, 0,
-							false));
-						utils.click(client.getMouseCanvasPosition());
-					}
-					else
-					{
-						if (!(lastTarget instanceof Player))
-						{
-							continue;
-						}
-						final Player playerTarget = new PlayerQuery().nameEquals(new String[]{lastTarget.getName()}).result(client).first();
-						if (playerTarget == null)
-						{
-							continue;
-						}
-						utils.setMenuEntry(new MenuEntry("Attack", "<col=ffffff>" + playerTarget.getName() + "<col=ff3000>  (level-" + playerTarget.getCombatLevel() + ")", playerTarget.getPlayerId(), client.isSpellSelected() ? MenuOpcode.SPELL_CAST_ON_PLAYER.getId() : MenuOpcode.PLAYER_SECOND_OPTION.getId(), 0, 0,
-							false));
-						utils.click(client.getMouseCanvasPosition());
-					}
+					lasttarg.add(getLastTarget());
 				}
 				break;
 				case "movetotarget":
 				{
-					final Actor lastTarget = getLastTarget();
-					if (lastTarget == null)
-					{
-						continue;
-					}
-					if (!(lastTarget instanceof Player))
-					{
-						continue;
-					}
-					final Player playerTarget = new PlayerQuery().nameEquals(new String[]{lastTarget.getName()}).result(client).first();
-					if (playerTarget == null)
-					{
-						continue;
-					}
-					utils.setMenuEntry(new MenuEntry("Follow", "<col=ff0000>" + playerTarget.getName() + "<col=ff00>  (level-" + playerTarget.getCombatLevel() + ")", playerTarget.getPlayerId(), MenuOpcode.PLAYER_THIRD_OPTION.getId(), 0, 0,
-						false));
-					utils.click(client.getMouseCanvasPosition());
+					movetarg.add(getLastTarget());
 				}
 				break;
 			}
@@ -463,8 +344,7 @@ public class gearswapperPlugin extends Plugin
 			{
 				try
 				{
-					utils.setMenuEntry(new MenuEntry("", "", item.getId(), MenuOpcode.ITEM_FIRST_OPTION.getId(), item.getIndex(), WidgetInfo.INVENTORY.getId(),
-						false));
+					utils.setMenuEntry(new MenuEntry("", "", item.getId(), MenuOpcode.ITEM_FIRST_OPTION.getId(), item.getIndex(), WidgetInfo.INVENTORY.getId(),false));
 					utils.click(item.getCanvasBounds());
 					Thread.sleep(getMillis());
 				}
@@ -477,8 +357,7 @@ public class gearswapperPlugin extends Plugin
 			{
 				try
 				{
-					utils.setMenuEntry(new MenuEntry("", "", item.getId(), MenuOpcode.ITEM_SECOND_OPTION.getId(), item.getIndex(), WidgetInfo.INVENTORY.getId(),
-						false));
+					utils.setMenuEntry(new MenuEntry("", "", item.getId(), MenuOpcode.ITEM_SECOND_OPTION.getId(), item.getIndex(), WidgetInfo.INVENTORY.getId(),false));
 					utils.click(item.getCanvasBounds());
 					Thread.sleep(getMillis());
 				}
@@ -491,8 +370,7 @@ public class gearswapperPlugin extends Plugin
 			{
 				try
 				{
-					utils.setMenuEntry(new MenuEntry("", "", 1, 57, -1, GearID,
-						false));
+					utils.setMenuEntry(new MenuEntry("", "", 1, 57, -1, GearID,false));
 					utils.click(client.getMouseCanvasPosition());
 					Thread.sleep(getMillis());
 				}
@@ -501,24 +379,193 @@ public class gearswapperPlugin extends Plugin
 					e.printStackTrace();
 				}
 			}
-					for (WidgetItem item : inventoryItems)
+			for (WidgetItem item : inventoryItems)
+			{
+				if (finalDropitem.getId() == item.getId()) //6512 is empty widget slot
+				{
+						utils.setMenuEntry(new MenuEntry("", "", item.getId(), MenuOpcode.ITEM_FIFTH_OPTION.getId(), item.getIndex(), WidgetInfo.INVENTORY.getId(),false));
+						utils.click(item.getCanvasBounds());
+					try
 					{
-						if (finalDropitem.getId() == item.getId()) //6512 is empty widget slot
-						{
-							utils.setMenuEntry(new MenuEntry("", "", item.getId(), MenuOpcode.ITEM_FIFTH_OPTION.getId(), item.getIndex(), WidgetInfo.INVENTORY.getId(),
-								false));
-							utils.click(item.getCanvasBounds());
-							try
-							{
-								Thread.sleep((int) getMillis());
-							}
-							catch (InterruptedException e)
-							{
-								e.printStackTrace();
-							}
-						}
+						Thread.sleep((int) getMillis());
 					}
-
+					catch (InterruptedException e)
+					{
+						e.printStackTrace();
+					}
+				}
+			}
+			for (WidgetInfo widginfo : widgetlist)
+			{
+				if (widginfo == null)
+				{
+					log.debug("Prayer: Can't find valid widget info for param {}.", widginfo);
+					continue;
+				}
+				final Widget widget = client.getWidget(widginfo);
+				if (widget == null)
+				{
+					log.debug("Prayer: Can't find valid widget for param {}.", widget);
+					continue;
+				}
+					utils.setMenuEntry(new MenuEntry("", "", 1, 57, widget.getItemId(), widget.getId(), false));
+					utils.click(client.getMouseCanvasPosition());
+					try
+					{
+						Thread.sleep((int) getMillis());
+					}
+					catch (InterruptedException e)
+					{
+						e.printStackTrace();
+					}
+				}
+			for (WidgetInfo widginfo1 : widgetlist1)
+			{
+				if (widginfo1 == null)
+				{
+					log.debug("Spell: Can't find valid widget info for param {}.", widginfo1);
+					continue;
+				}
+				final Widget widget = client.getWidget(widginfo1);
+				if (widget == null)
+				{
+					log.debug("Spell: Can't find valid widget for param {}.", widget);
+					continue;
+				}
+				utils.setMenuEntry(new MenuEntry("", "", 1, 25, widget.getItemId(), widget.getId(), false));
+				utils.click(client.getMouseCanvasPosition());
+				try
+				{
+					Thread.sleep((int) getMillis());
+				}
+				catch (InterruptedException e)
+				{
+					e.printStackTrace();
+				}
+			}
+			for (Actor targ : lasttarg)
+			{
+				if (targ == null)
+				{
+					continue;
+				}
+				if (targ instanceof NPC)
+				{
+					final NPC npcTarget = new NPCQuery().idEquals(new int[]{((NPC) targ).getId()}).result(client).first();
+					if (npcTarget == null)
+					{
+						continue;
+					}
+					utils.setMenuEntry(new MenuEntry("", "", ((NPC) targ).getIndex(), client.isSpellSelected() ? MenuOpcode.SPELL_CAST_ON_NPC.getId() : MenuOpcode.NPC_SECOND_OPTION.getId(), 0, 0,false));
+					utils.click(client.getMouseCanvasPosition());
+				}
+				else
+				{
+					if (!(targ instanceof Player))
+					{
+						continue;
+					}
+					final Player playerTarget = new PlayerQuery().nameEquals(new String[]{targ.getName()}).result(client).first();
+					if (playerTarget == null)
+					{
+						continue;
+					}
+					utils.setMenuEntry(new MenuEntry("Attack", "<col=ffffff>" + playerTarget.getName() + "<col=ff3000>  (level-" + playerTarget.getCombatLevel() + ")", playerTarget.getPlayerId(), client.isSpellSelected() ? MenuOpcode.SPELL_CAST_ON_PLAYER.getId() : MenuOpcode.PLAYER_SECOND_OPTION.getId(), 0, 0,false));
+					utils.click(client.getMouseCanvasPosition());
+				}
+				try
+				{
+					Thread.sleep((int) getMillis());
+				}
+				catch (InterruptedException e)
+				{
+					e.printStackTrace();
+				}
+			}
+			for (Actor targ : movetarg)
+			{
+				if (targ == null)
+				{
+					continue;
+				}
+				if (!(targ instanceof Player))
+				{
+					continue;
+				}
+				final Player playerTarget = new PlayerQuery().nameEquals(new String[]{targ.getName()}).result(client).first();
+				if (playerTarget == null)
+				{
+					continue;
+				}
+				utils.setMenuEntry(new MenuEntry("Follow", "<col=ff0000>" + playerTarget.getName() + "<col=ff00>  (level-" + playerTarget.getCombatLevel() + ")", playerTarget.getPlayerId(), MenuOpcode.PLAYER_THIRD_OPTION.getId(), 0, 0, false));
+				utils.click(client.getMouseCanvasPosition());
+				try
+				{
+					Thread.sleep((int) getMillis());
+				}
+				catch (InterruptedException e)
+				{
+					e.printStackTrace();
+				}
+			}
+			for (Widget widget : widg)
+			{
+				if (widget == null)
+				{
+					log.debug("Spec: Can't find valid widget");
+					continue;
+				}
+				utils.sendGameMessage("Enable: "+widget.getId());
+				utils.setMenuEntry(new MenuEntry("", "", 1, 57, -1, widget.getId(),false));
+				utils.click(client.getMouseCanvasPosition());
+				try
+				{
+					Thread.sleep((int) getMillis());
+				}
+				catch (InterruptedException e)
+				{
+					e.printStackTrace();
+				}
+				try
+				{
+					Thread.sleep((int) getMillis());
+				}
+				catch (InterruptedException e)
+				{
+					e.printStackTrace();
+				}
+			}
+			for (Widget widget : widg1)
+			{
+				if (widget == null)
+				{
+					log.debug("Spec: Can't find valid widget");
+					continue;
+				}
+				if (client.getVar(VarPlayer.SPECIAL_ATTACK_ENABLED) != 1)
+				{
+					utils.sendGameMessage("EnableOn: "+widget.getId());
+					utils.setMenuEntry(new MenuEntry("", "", 1, 57, -1, widget.getId(),false));
+					utils.click(client.getMouseCanvasPosition());
+					continue;
+				}
+				try
+				{
+					Thread.sleep((int) getMillis());
+				}
+				catch (InterruptedException e)
+				{
+					e.printStackTrace();
+				}
+				try
+				{
+					Thread.sleep((int) getMillis());
+				}
+				catch (InterruptedException e)
+				{
+					e.printStackTrace();
+				}
+			}
 		});
 	}
 	private long getMillis()
