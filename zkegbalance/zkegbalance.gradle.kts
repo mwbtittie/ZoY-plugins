@@ -1,7 +1,5 @@
-
 /*
  * Copyright (c) 2019 Owain van Brakel <https://github.com/Owain94>
- * Copyright (c) 2019 Ganom <https://github.com/Ganom>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,15 +23,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-version = "0.0.5"
+version = "0.0.1"
 
-project.extra["PluginName"] = "Z Swapper"
-project.extra["PluginDescription"] = "Can do Lots of things combined."
-
-
-dependencies {
-    compileOnly(group = "com.openosrs.externals", name = "iutils", version = "1.1.0+")
-}
+project.extra["PluginName"] = "Z Keg Balance"
+project.extra["PluginDescription"] = "An automation utility for Keg Balancing"
 
 tasks {
     jar {
@@ -42,10 +35,6 @@ tasks {
                     "Plugin-Version" to project.version,
                     "Plugin-Id" to nameToId(project.extra["PluginName"] as String),
                     "Plugin-Provider" to project.extra["PluginProvider"],
-                    "Plugin-Dependencies" to
-                            arrayOf(
-                                    nameToId("iutils")
-                            ).joinToString(),
                     "Plugin-Description" to project.extra["PluginDescription"],
                     "Plugin-License" to project.extra["PluginLicense"]
             ))

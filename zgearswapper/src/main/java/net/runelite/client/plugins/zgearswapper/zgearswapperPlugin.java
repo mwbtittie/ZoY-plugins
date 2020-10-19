@@ -50,16 +50,16 @@ import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDependency;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.plugins.PluginType;
-import net.runelite.client.plugins.botutils.BotUtils;
 import net.runelite.client.util.Clipboard;
 import net.runelite.client.util.ColorUtil;
 import net.runelite.client.util.HotkeyListener;
+import net.runelite.client.plugins.iutils.*;
 import org.pf4j.Extension;
 
 @Extension
-@PluginDependency(BotUtils.class)
+@PluginDependency(iUtils.class)
 @PluginDescriptor(
-	name = "<html>Z Swapper <font size=\"\" color=\"green\"<b>BETA</font></b></html>",
+	name = "<html>Z Swapper <font size=\"\" color=\"green\"<b>:)</font></b></html>",
 	description = "Multiple Swapper that support multiple commands pipelined together.",
 	tags = { "zoy", "swapper", "custom" },
 	type = PluginType.UTILITY
@@ -76,7 +76,28 @@ public class zgearswapperPlugin extends Plugin
 	private Client client;
 
 	@Inject
-	private BotUtils utils;
+	private iUtils utils;
+
+	@Inject
+	private InventoryUtils inventory;
+
+	@Inject
+	private ContainerUtils container;
+
+	@Inject
+	private MenuUtils menu;
+
+	@Inject
+	private MouseUtils mouse;
+
+	@Inject
+	private NPCUtils npcutils;
+
+	@Inject
+	private InterfaceUtils interfaceutils;
+
+	@Inject
+	private CalculationUtils calculationUtils;
 
 	@Inject
 	private KeyManager keyManager;
@@ -261,7 +282,7 @@ public class zgearswapperPlugin extends Plugin
 			{
 				case "equip":
 				{
-					equipitemids.add(utils.getInventoryWidgetItem(Integer.parseInt(param)));
+					equipitemids.add(inventory.getWidgetItem(Integer.parseInt(param)));
 				}
 				break;
 				case "remove":
@@ -287,13 +308,13 @@ public class zgearswapperPlugin extends Plugin
 				break;
 				case "drop":
 				{
-					dropitem = utils.getInventoryWidgetItem(Integer.parseInt(param));
-					inventoryItems.addAll(utils.getAllInventoryItems());
+					dropitem = inventory.getWidgetItem(Integer.parseInt(param));
+					inventoryItems.addAll(inventory.getAllItems());
 				}
 				break;
 				case "eat":
 				{
-					foodids.add(utils.getInventoryWidgetItem(Integer.parseInt(param)));
+					foodids.add(inventory.getWidgetItem(Integer.parseInt(param)));
 				}
 				break;
 				case "pray":
@@ -342,8 +363,8 @@ public class zgearswapperPlugin extends Plugin
 			{
 				try
 				{
-					utils.setMenuEntry(new MenuEntry("", "", item.getId(), MenuOpcode.ITEM_FIRST_OPTION.getId(), item.getIndex(), WidgetInfo.INVENTORY.getId(),false));
-					utils.click(item.getCanvasBounds());
+					menu.setEntry(new MenuEntry("", "", item.getId(), MenuOpcode.ITEM_FIRST_OPTION.getId(), item.getIndex(), WidgetInfo.INVENTORY.getId(),false));
+					mouse.click(item.getCanvasBounds());
 					Thread.sleep(getMillis());
 				}
 				catch (InterruptedException e)
@@ -355,8 +376,8 @@ public class zgearswapperPlugin extends Plugin
 			{
 				try
 				{
-					utils.setMenuEntry(new MenuEntry("", "", item.getId(), MenuOpcode.ITEM_SECOND_OPTION.getId(), item.getIndex(), WidgetInfo.INVENTORY.getId(),false));
-					utils.click(item.getCanvasBounds());
+					menu.setEntry(new MenuEntry("", "", item.getId(), MenuOpcode.ITEM_SECOND_OPTION.getId(), item.getIndex(), WidgetInfo.INVENTORY.getId(),false));
+					mouse.click(item.getCanvasBounds());
 					Thread.sleep(getMillis());
 				}
 				catch (InterruptedException e)
@@ -368,8 +389,8 @@ public class zgearswapperPlugin extends Plugin
 			{
 				try
 				{
-					utils.setMenuEntry(new MenuEntry("", "", 1, 57, -1, GearID,false));
-					utils.click(client.getMouseCanvasPosition());
+					menu.setEntry(new MenuEntry("", "", 1, 57, -1, GearID,false));
+					mouse.click(client.getMouseCanvasPosition());
 					Thread.sleep(getMillis());
 				}
 				catch (InterruptedException e)
@@ -381,8 +402,8 @@ public class zgearswapperPlugin extends Plugin
 			{
 				if (finalDropitem.getId() == item.getId()) //6512 is empty widget slot
 				{
-						utils.setMenuEntry(new MenuEntry("", "", item.getId(), MenuOpcode.ITEM_FIFTH_OPTION.getId(), item.getIndex(), WidgetInfo.INVENTORY.getId(),false));
-						utils.click(item.getCanvasBounds());
+						menu.setEntry(new MenuEntry("", "", item.getId(), MenuOpcode.ITEM_FIFTH_OPTION.getId(), item.getIndex(), WidgetInfo.INVENTORY.getId(),false));
+						mouse.click(item.getCanvasBounds());
 					try
 					{
 						Thread.sleep((int) getMillis());
@@ -406,8 +427,8 @@ public class zgearswapperPlugin extends Plugin
 					log.debug("Prayer: Can't find valid widget for param {}.", widget);
 					continue;
 				}
-					utils.setMenuEntry(new MenuEntry("", "", 1, 57, widget.getItemId(), widget.getId(), false));
-					utils.click(client.getMouseCanvasPosition());
+					menu.setEntry(new MenuEntry("", "", 1, 57, widget.getItemId(), widget.getId(), false));
+					mouse.click(client.getMouseCanvasPosition());
 					try
 					{
 						Thread.sleep((int) getMillis());
@@ -430,8 +451,8 @@ public class zgearswapperPlugin extends Plugin
 					log.debug("Spell: Can't find valid widget for param {}.", widget);
 					continue;
 				}
-				utils.setMenuEntry(new MenuEntry("", "", 1, 25, widget.getItemId(), widget.getId(), false));
-				utils.click(client.getMouseCanvasPosition());
+				menu.setEntry(new MenuEntry("", "", 1, 25, widget.getItemId(), widget.getId(), false));
+				mouse.click(client.getMouseCanvasPosition());
 				try
 				{
 					Thread.sleep((int) getMillis());
@@ -454,8 +475,8 @@ public class zgearswapperPlugin extends Plugin
 					{
 						continue;
 					}
-					utils.setMenuEntry(new MenuEntry("", "", ((NPC) targ).getIndex(), client.isSpellSelected() ? MenuOpcode.SPELL_CAST_ON_NPC.getId() : MenuOpcode.NPC_SECOND_OPTION.getId(), 0, 0,false));
-					utils.click(client.getMouseCanvasPosition());
+					menu.setEntry(new MenuEntry("", "", ((NPC) targ).getIndex(), client.isSpellSelected() ? MenuOpcode.SPELL_CAST_ON_NPC.getId() : MenuOpcode.NPC_SECOND_OPTION.getId(), 0, 0,false));
+					mouse.click(client.getMouseCanvasPosition());
 				}
 				else
 				{
@@ -468,8 +489,8 @@ public class zgearswapperPlugin extends Plugin
 					{
 						continue;
 					}
-					utils.setMenuEntry(new MenuEntry("Attack", "<col=ffffff>" + playerTarget.getName() + "<col=ff3000>  (level-" + playerTarget.getCombatLevel() + ")", playerTarget.getPlayerId(), client.isSpellSelected() ? MenuOpcode.SPELL_CAST_ON_PLAYER.getId() : MenuOpcode.PLAYER_SECOND_OPTION.getId(), 0, 0,false));
-					utils.click(client.getMouseCanvasPosition());
+					menu.setEntry(new MenuEntry("Attack", "<col=ffffff>" + playerTarget.getName() + "<col=ff3000>  (level-" + playerTarget.getCombatLevel() + ")", playerTarget.getPlayerId(), client.isSpellSelected() ? MenuOpcode.SPELL_CAST_ON_PLAYER.getId() : MenuOpcode.PLAYER_SECOND_OPTION.getId(), 0, 0,false));
+					mouse.click(client.getMouseCanvasPosition());
 				}
 				try
 				{
@@ -495,8 +516,8 @@ public class zgearswapperPlugin extends Plugin
 				{
 					continue;
 				}
-				utils.setMenuEntry(new MenuEntry("Follow", "<col=ff0000>" + playerTarget.getName() + "<col=ff00>  (level-" + playerTarget.getCombatLevel() + ")", playerTarget.getPlayerId(), MenuOpcode.PLAYER_THIRD_OPTION.getId(), 0, 0, false));
-				utils.click(client.getMouseCanvasPosition());
+				menu.setEntry(new MenuEntry("Follow", "<col=ff0000>" + playerTarget.getName() + "<col=ff00>  (level-" + playerTarget.getCombatLevel() + ")", playerTarget.getPlayerId(), MenuOpcode.PLAYER_THIRD_OPTION.getId(), 0, 0, false));
+				mouse.click(client.getMouseCanvasPosition());
 				try
 				{
 					Thread.sleep((int) getMillis());
@@ -514,8 +535,8 @@ public class zgearswapperPlugin extends Plugin
 					continue;
 				}
 				utils.sendGameMessage("Enable: "+widget.getId());
-				utils.setMenuEntry(new MenuEntry("", "", 1, 57, -1, widget.getId(),false));
-				utils.click(client.getMouseCanvasPosition());
+				menu.setEntry(new MenuEntry("", "", 1, 57, -1, widget.getId(),false));
+				mouse.click(client.getMouseCanvasPosition());
 				try
 				{
 					Thread.sleep((int) getMillis());
@@ -543,8 +564,8 @@ public class zgearswapperPlugin extends Plugin
 				if (client.getVar(VarPlayer.SPECIAL_ATTACK_ENABLED) != 1)
 				{
 					utils.sendGameMessage("EnableOn: "+widget.getId());
-					utils.setMenuEntry(new MenuEntry("", "", 1, 57, -1, widget.getId(),false));
-					utils.click(client.getMouseCanvasPosition());
+					menu.setEntry(new MenuEntry("", "", 1, 57, -1, widget.getId(),false));
+					mouse.click(client.getMouseCanvasPosition());
 					continue;
 				}
 				try

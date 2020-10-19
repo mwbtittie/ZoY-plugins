@@ -27,6 +27,7 @@ rootProject.name = "ZoY Plugins"
 
 include(":zcursealch")
 include(":zgearswapper")
+include(":zkegbalance")
 
 for (project in rootProject.children) {
     project.apply {

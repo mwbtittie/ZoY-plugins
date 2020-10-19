@@ -18,16 +18,17 @@ import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.api.Client;
 import net.runelite.api.MenuEntry;
 import net.runelite.api.events.GameTick;
-import net.runelite.client.plugins.botutils.BotUtils;
+import net.runelite.client.plugins.iutils.*;
 import org.pf4j.Extension;
 import static net.runelite.client.plugins.zcursealch.zcursealchState.*;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.ui.overlay.OverlayManager;
+
 import java.time.Instant;
 
 @Extension
-@PluginDependency(BotUtils.class)
+@PluginDependency(iUtils.class)
 @PluginDescriptor(
 		name = "Z Curse Alch",
 		description = "Curse/Alch plugin",
@@ -45,7 +46,22 @@ public class zcursealchPlugin extends Plugin {
 	private Client client;
 
 	@Inject
-	private BotUtils utils;
+	private iUtils utils;
+
+	@Inject
+	private InventoryUtils inventory;
+
+	@Inject
+	private ContainerUtils container;
+
+	@Inject
+	private NPCUtils npcutils;
+
+	@Inject
+	private InterfaceUtils interfaceutils;
+
+	@Inject
+	private CalculationUtils calculationUtils;
 
 	@Inject
 	private OverlayManager overlayManager;
@@ -119,7 +135,7 @@ public class zcursealchPlugin extends Plugin {
 		switch (event.getKey())
 		{
 			case "npcID":
-				splashNPC = utils.findNearestNpc(config.npcID());
+				splashNPC = npcutils.findNearestNpc(config.npcID());
 				log.debug("NPC ID set to {}", config.npcID());
 				break;
 			case "itemID":
@@ -182,8 +198,8 @@ public class zcursealchPlugin extends Plugin {
 		if(splashNPC != null && !doalch && !dostun){
 			dostun = true;
 		}
-		splashNPC = utils.findNearestNpc(config.npcID());
-		splashNPC1 = utils.findNearestNpc(config.npcID());
+		splashNPC = npcutils.findNearestNpc(config.npcID());
+		splashNPC1 = npcutils.findNearestNpc(config.npcID());
 		return (splashNPC != null) ? FIND_NPC : NPC_NOT_FOUND;
 	}
 
@@ -210,7 +226,7 @@ public class zcursealchPlugin extends Plugin {
 				doalch = true;
 				break;
 			case FIND_NPC:
-				splashNPC = utils.findNearestNpc(config.npcID());
+				splashNPC = npcutils.findNearestNpc(config.npcID());
 				if (splashNPC == null)
 				{
 					return;
@@ -221,7 +237,7 @@ public class zcursealchPlugin extends Plugin {
 				log.debug("NPC not found");
 				if (config.logout())
 				{
-					utils.logout();
+					interfaceutils.logout();
 				}
 				else
 				{
@@ -245,7 +261,7 @@ public class zcursealchPlugin extends Plugin {
 			utils.sendGameMessage("Out of runes! Stopping plugin");
 			if (config.logout())
 			{
-				utils.logout();
+				interfaceutils.logout();
 			}
 			return;
 		}
@@ -254,7 +270,7 @@ public class zcursealchPlugin extends Plugin {
 			utils.sendGameMessage("Failed to Reach NPC, Stopping plugin");
 			if (config.logout())
 			{
-				utils.logout();
+				interfaceutils.logout();
 			}
 			return;
 		}
@@ -273,12 +289,12 @@ public class zcursealchPlugin extends Plugin {
 	private WidgetItem getItem()
 	{
 		log.debug("finding item");
-		return utils.getInventoryWidgetItem(itemID);
+		return inventory.getWidgetItem(itemID);
 	}
 
 	private long sleepDelay()
 	{
-		sleepLength = utils.randomDelay(config.sleepWeightedDistribution(), config.sleepMin(), config.sleepMax(), config.sleepDeviation(), config.sleepTarget());
+		sleepLength = calculationUtils.randomDelay(config.sleepWeightedDistribution(), config.sleepMin(), config.sleepMax(), config.sleepDeviation(), config.sleepTarget());
 		return sleepLength;
 	}
 
