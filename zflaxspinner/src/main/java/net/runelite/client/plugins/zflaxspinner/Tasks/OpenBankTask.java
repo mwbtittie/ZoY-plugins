@@ -21,7 +21,7 @@ public class OpenBankTask extends Task
 		if (utils.isBankOpen(client))
 			return false;
 
-		if (this.utils.inventoryContains( client, "flax"))
+		if (this.utils.inventoryContains( client, "flax") && !utils.inventoryFull())
 			return false;
 
 		return true;
@@ -30,7 +30,7 @@ public class OpenBankTask extends Task
 	@Override
 	public String getTaskDescription()
 	{
-		return "Opening Bank";
+		return "Open Bank";
 	}
 
 	@Override

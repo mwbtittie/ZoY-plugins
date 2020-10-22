@@ -19,7 +19,7 @@ public class ClimbDownTask extends Task
 			return false;
 
 		//check
-		if (this.utils.inventoryContains(client, "energy"))
+		if (this.utils.inventoryContains(client, "flax"))
 			return false;
 
 		return true;
@@ -45,7 +45,7 @@ public class ClimbDownTask extends Task
 		}
 
 		QueryResults<GameObject> gameObjects = new GameObjectQuery()
-				.idEquals(ObjectID.STAIRCASE_16672)
+				.idEquals(ObjectID.LADDER_25939)
 				.result(client);
 
 		if (gameObjects == null || gameObjects.isEmpty())

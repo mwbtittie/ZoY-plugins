@@ -90,7 +90,7 @@ public class ZFlaxSpinnerPlugin extends Plugin
 
 			new OpenBankTask(),
 			new WithdrawingFlaxTask(),
-			new ClimbUpTask(),
+			new SpinWheelTask(),
 			new FlaxRoomDoorTask(),
 			new ExitFlaxRoomTask(),
 			new ExitFlaxDoorTask(),

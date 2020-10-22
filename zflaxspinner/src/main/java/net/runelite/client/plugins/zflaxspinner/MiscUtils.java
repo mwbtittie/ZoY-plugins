@@ -251,6 +251,33 @@ public class MiscUtils {
 		return null;
 	}
 
+	public boolean inventoryItemContainsAmount(int id, int amount, boolean stackable, boolean exactAmount)
+	{
+		Widget inventoryWidget = client.getWidget(WidgetInfo.INVENTORY);
+		int total = 0;
+		if (inventoryWidget != null)
+		{
+			Collection<WidgetItem> items = inventoryWidget.getWidgetItems();
+			for (WidgetItem item : items)
+			{
+				if (item.getId() == id)
+				{
+					if (stackable)
+					{
+						total = item.getQuantity();
+						break;
+					}
+					total++;
+				}
+			}
+		}
+		if ((exactAmount && total != amount) || (total < amount))
+		{
+			return false;
+		}
+		return true;
+	}
+
 	public long get_random_delay(int min, int max)
 	{
 		return getRandomIntBetweenRange(min, max);
@@ -269,11 +296,29 @@ public class MiscUtils {
 		});
 	}
 
+	public void clickwheel(GameObject gameObject)
+	{
+		executorService.submit(() ->
+		{
+			targetMenu = new MenuEntry("Spin", "", gameObject.getId(), MenuOpcode.GAME_OBJECT_SECOND_OPTION.getId(), gameObject.getLocalLocation().getSceneX(), gameObject.getLocalLocation().getSceneY(), false);
+			click();
+		});
+	}
+
+	public void spinflax()
+	{
+		executorService.submit(() ->
+		{
+			targetMenu = new MenuEntry("Spin", "", 1, 57, -1, 17694736, false);
+			click();
+		});
+	}
+
 	public void climbdown(GameObject gameObject)
 	{
 		executorService.submit(() ->
 		{
-			targetMenu = new MenuEntry("Climb-down", "", gameObject.getId(), MenuOpcode.GAME_OBJECT_THIRD_OPTION.getId(), gameObject.getLocalLocation().getSceneX()-1, gameObject.getLocalLocation().getSceneY()-1, false);
+			targetMenu = new MenuEntry("Climb-down", "", gameObject.getId(), MenuOpcode.GAME_OBJECT_FIRST_OPTION.getId(), gameObject.getLocalLocation().getSceneX(), gameObject.getLocalLocation().getSceneY(), false);
 			click();
 		});
 	}

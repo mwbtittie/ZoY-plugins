@@ -1,5 +1,6 @@
 package net.runelite.client.plugins.zflaxspinner.Tasks;
 
+import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.GameObject;
 import net.runelite.api.ObjectID;
 import net.runelite.api.QueryResults;
@@ -7,10 +8,12 @@ import net.runelite.api.WallObject;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.queries.GameObjectQuery;
 import net.runelite.api.queries.WallObjectQuery;
+import net.runelite.api.widgets.Widget;
+import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.plugins.zflaxspinner.Zones;
 import net.runelite.client.plugins.zflaxspinner.ZFlaxSpinnerPlugin;
 import net.runelite.client.plugins.zflaxspinner.Task;
-
+@Slf4j
 public class FlaxRoomDoorTask extends Task
 {
 
@@ -21,8 +24,14 @@ public class FlaxRoomDoorTask extends Task
 		if (!utils.isInRegion(client, Zones.seers))
 			return false;
 
+		if (client.getLocalPlayer().getAnimation() != -1)
+			return false;
+
 		//check
-		if (!this.utils.inventoryContains(client, "energy") && !utils.inventoryFull())
+		if (!this.utils.inventoryContains(client, "flax") && utils.inventoryFull())
+			return false;
+
+		if (this.utils.inventoryContains(client, "string") && utils.inventoryFull())
 			return false;
 
 		return true;
@@ -31,12 +40,13 @@ public class FlaxRoomDoorTask extends Task
 	@Override
 	public String getTaskDescription()
 	{
-		return "opening flax Room door";
+		return "Flax Room Door";
 	}
 
 	@Override
 	public void onGameTick(GameTick event)
 	{
+
 		if(ZFlaxSpinnerPlugin.delay >0){
 			ZFlaxSpinnerPlugin.delay--;
 			return;
@@ -56,11 +66,13 @@ public class FlaxRoomDoorTask extends Task
 				.result(client);
 
 		QueryResults<GameObject> gameObjects = new GameObjectQuery()
-				.idEquals(25938).atWorldLocation(Zones.ladder)
+				.idEquals(ObjectID.LADDER_25938).atWorldLocation(Zones.ladder)
 				.result(client);
+
 
 		if (wallObjects != null && !wallObjects.isEmpty())
 		{
+			log.info("opening door");
 			WallObject wallObject = wallObjects.first();
 
 			utils.clickwallobject(wallObject);
@@ -70,6 +82,7 @@ public class FlaxRoomDoorTask extends Task
 
 		if (wallObjects1 != null && !wallObjects1.isEmpty())
 		{
+			log.info("door is opened");
 			if (gameObjects == null || gameObjects.isEmpty())
 			{
 				return;
@@ -80,6 +93,7 @@ public class FlaxRoomDoorTask extends Task
 			if (gameObject == null)
 				return;
 
+			log.info("climbing up clicking object");
 			utils.clickgameobject(gameObject);
 			ZFlaxSpinnerPlugin.delay = plugin.tickDelay();
 		}
