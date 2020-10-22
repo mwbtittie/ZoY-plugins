@@ -31,7 +31,7 @@ import java.util.concurrent.ExecutorService;
 @PluginDescriptor(
 	name = "Z Keg Balance",
 	description = "An automation utility for Keg Balancing",
-	tags = {"combat", "strength", "hitpoints", "training", "keg", "balance", "warrior", "guild"},
+		tags = { "zoy", "key", "custom", "balance", "keg balance" },
 	enabledByDefault = false,
 	type = PluginType.MINIGAME
 )
@@ -110,7 +110,7 @@ public class ZKegBalancePlugin extends Plugin
 
 	@Subscribe
 	public void onConfigButtonClicked(ConfigButtonClicked event) {
-		if (!event.getGroup().equals("kegbalance"))
+		if (!event.getGroup().equals("zkegbalance"))
 			return;
 		if (event.getKey().equals("startButton")) {
 			pluginStarted = !pluginStarted;
