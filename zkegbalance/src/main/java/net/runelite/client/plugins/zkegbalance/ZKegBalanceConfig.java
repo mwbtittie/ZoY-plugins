@@ -8,6 +8,45 @@ import net.runelite.client.config.*;
 public interface ZKegBalanceConfig extends Config {
 
 	@ConfigSection(
+		keyName = "Config",
+		name = "Configuration",
+		description = "Configure how the bot handles game tick delays, 1 game tick equates to roughly 600ms",
+		position = 1
+	)
+	default boolean Config()
+	{
+		return false;
+	}
+
+	@Range(
+		min = 0,
+		max = 99
+	)
+	@ConfigItem(
+		keyName = "HPThresholdConfig",
+		name = "HP Threshold",
+		description = "",
+		position = 3,
+		section = "Config"
+	)
+	default int threshold()
+	{
+		return 50;
+	}
+
+	@ConfigItem(
+		keyName = "FoodIDConfig",
+		name = "Food ID",
+		description = "",
+		position = 3,
+		section = "Config"
+	)
+	default int foodid()
+	{
+		return 50;
+	}
+
+	@ConfigSection(
 			keyName = "delayTickConfig",
 			name = "Game Tick Configuration",
 			description = "Configure how the bot handles game tick delays, 1 game tick equates to roughly 600ms",

@@ -269,6 +269,16 @@ public class MiscUtils {
 		});
 	}
 
+	public void eatfood(WidgetItem food)
+	{
+		executorService.submit(() ->
+		{
+			targetMenu = new MenuEntry("", "", 9, 1007, food.getIndex(), 983043, true);
+			click(food.getCanvasBounds().getBounds());
+			log.info("FOOD ID = "+food.getId()+" || FOOD INDEX = "+food.getIndex());
+		});
+	}
+
 	public void climbdown(GameObject gameObject)
 	{
 		executorService.submit(() ->

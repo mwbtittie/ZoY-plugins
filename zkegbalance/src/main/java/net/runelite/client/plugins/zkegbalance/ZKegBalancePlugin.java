@@ -90,6 +90,8 @@ public class ZKegBalancePlugin extends Plugin
 
 			new OpenBankTask(),
 			new WithdrawingPotsTask(),
+			new WithdrawingFoodTask(),
+			new EatingFoodTask(),
 			new ClimbUpTask(),
 			new HeavyDoorTask(),
 			new KegRoomDoorTask(),

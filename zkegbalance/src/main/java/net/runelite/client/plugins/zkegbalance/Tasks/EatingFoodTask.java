@@ -1,16 +1,18 @@
 package net.runelite.client.plugins.zkegbalance.Tasks;
 
 import lombok.extern.slf4j.Slf4j;
+import net.runelite.api.MenuEntry;
 import net.runelite.api.Skill;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetInfo;
-import net.runelite.client.plugins.zkegbalance.Zones;
-import net.runelite.client.plugins.zkegbalance.ZKegBalancePlugin;
+import net.runelite.api.widgets.WidgetItem;
 import net.runelite.client.plugins.zkegbalance.Task;
+import net.runelite.client.plugins.zkegbalance.ZKegBalancePlugin;
+import net.runelite.client.plugins.zkegbalance.Zones;
 
 @Slf4j
-public class WithdrawingPotsTask extends Task
+public class EatingFoodTask extends Task
 {
 	@Override
 	public boolean validate()
@@ -26,7 +28,10 @@ public class WithdrawingPotsTask extends Task
 		if (this.utils.inventoryContains( client, "energy"))
 			return false;
 
-		if(client.getBoostedSkillLevel(Skill.HITPOINTS) <= config.threshold())
+		if (!this.utils.inventoryContains( client, config.foodid()))
+			return false;
+
+		if(client.getBoostedSkillLevel(Skill.HITPOINTS) >= config.threshold())
 			return false;
 
 		return true;
@@ -35,7 +40,7 @@ public class WithdrawingPotsTask extends Task
 	@Override
 	public String getTaskDescription()
 	{
-		return "Withdrawing Energy Potions";
+		return "Eating food";
 	}
 
 	@Override
@@ -45,19 +50,8 @@ public class WithdrawingPotsTask extends Task
 			ZKegBalancePlugin.WithdrawDelay--;
 			return;
 		}
-		Widget widget = client.getWidget(WidgetInfo.BANK_DEPOSIT_INVENTORY);
-		if(this.utils.inventoryContains(client, "vial") || this.utils.inventoryContains(client, config.foodid())){
-			utils.deposit(widget);
-			return;
-		}
-		if(!this.utils.inventoryContains(client, "vial") || !this.utils.inventoryContains(client, config.foodid())) {
-		if(!utils.bankContainsAnyOf(3008)){
-			utils.withdrawAllItem(3010);
-		}
-		if(utils.bankContainsAnyOf(3008)){
-			utils.withdrawAllItem(3008);
-		}
-			ZKegBalancePlugin.WithdrawDelay = plugin.tickDelay();
+		if(this.utils.inventoryContains(client, config.foodid()) && client.getBoostedSkillLevel(Skill.HITPOINTS) <= config.threshold()){
+			utils.eatfood(utils.getInventoryWidgetItem(config.foodid()));
 		}
 	}
 
