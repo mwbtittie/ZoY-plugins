@@ -25,14 +25,14 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-version = "0.0.4"
+version = "0.0.5"
 
 project.extra["PluginName"] = "Z Curse Alch"
 project.extra["PluginDescription"] = "Auto Curse Alch, that supports high alching item and cursing an NPC"
 
 
 dependencies {
-    compileOnly(group = "com.openosrs.externals", name = "iutils", version = "1.1.0+")
+    compileOnly(group = "com.openosrs.externals", name = "iutils", version = "2.3.6+")
 }
 
 tasks {

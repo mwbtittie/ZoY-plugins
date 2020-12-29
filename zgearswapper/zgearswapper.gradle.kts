@@ -25,14 +25,14 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-version = "0.0.5"
+version = "0.0.6"
 
 project.extra["PluginName"] = "Z Swapper"
 project.extra["PluginDescription"] = "Can do Lots of things combined."
 
 
 dependencies {
-    compileOnly(group = "com.openosrs.externals", name = "iutils", version = "1.1.0+")
+    compileOnly(group = "com.openosrs.externals", name = "iutils", version = "2.3.6+")
 }
 
 tasks {
