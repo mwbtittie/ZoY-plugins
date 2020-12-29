@@ -25,7 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-version = "0.1"
+version = "0.1.1"
 
 project.extra["PluginName"] = "Z Food Eater"
 project.extra["PluginDescription"] = "Can do Lots of things combined."

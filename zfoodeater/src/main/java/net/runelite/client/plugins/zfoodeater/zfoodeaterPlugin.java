@@ -92,21 +92,17 @@ public class zfoodeaterPlugin extends Plugin
 	private void eatItem()
 	{
 		ints = utils.stringToIntList(config.food());
-		utils.sendGameMessage("List: "+ ints);
 		for (int i = 0; i < ints.size(); i++) {
 			foodids.add(inventory.getWidgetItem(ints.get(i)));
 		}
-		utils.sendGameMessage("--------- start of Loop ---------");
 		long sleep = 0;
 		for (WidgetItem item : foodids) {
 			if (item != null)
 			{
-				utils.sendGameMessage("eating food = " + item.getId()+" || Index = "+item.getIndex());
 				sleep += calculationUtils.getRandomIntBetweenRange(config.randLow(), config.randHigh());
 				utils.doItemActionMsTime(item, MenuOpcode.ITEM_FIRST_OPTION.getId(), WidgetInfo.INVENTORY.getId(), sleep);
 			}
 		}
-		utils.sendGameMessage("--------- End of Loop ---------");
 		foodids.clear();
 	}
 
@@ -133,21 +129,17 @@ public class zfoodeaterPlugin extends Plugin
 		if (event.getCommand().equalsIgnoreCase("eat1"))
 		{
 			ints = utils.stringToIntList(config.food());
-			utils.sendGameMessage("List: "+ ints);
 			for (int i = 0; i < ints.size(); i++) {
 				foodids.add(inventory.getWidgetItem(ints.get(i)));
 			}
-			utils.sendGameMessage("--------- start of Loop ---------");
 			long sleep = 0;
 			for (WidgetItem item : foodids) {
 				if (item != null)
 				{
-					utils.sendGameMessage("eating food = " + item.getId()+" || Index = "+item.getIndex());
 					sleep += calculationUtils.getRandomIntBetweenRange(config.randLow(), config.randHigh());
 					utils.doItemActionMsTime(item, MenuOpcode.ITEM_FIRST_OPTION.getId(), WidgetInfo.INVENTORY.getId(), sleep);
 				}
 			}
-			utils.sendGameMessage("--------- End of Loop ---------");
 			foodids.clear();
 		}
 
