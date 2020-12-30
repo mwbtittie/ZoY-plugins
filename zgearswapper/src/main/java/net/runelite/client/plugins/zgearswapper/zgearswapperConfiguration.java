@@ -70,7 +70,7 @@ public interface zgearswapperConfiguration extends Config
 	}
 	@ConfigItem(
 		keyName = "customswapone",
-		name = "Enable Custom Swap Onesdfaseaf",
+		name = "Enable Custom Swap Onesdfaseafsdf",
 		description = "",
 		section = "GearSwaps",
 		position = 3
