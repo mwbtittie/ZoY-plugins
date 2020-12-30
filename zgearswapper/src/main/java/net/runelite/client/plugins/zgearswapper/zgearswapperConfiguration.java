@@ -187,5 +187,43 @@ public interface zgearswapperConfiguration extends Config
 	{
 		return "ID:REMOVE";
 	}
+	@ConfigItem(
+		keyName = "customswapfour",
+		name = "Enable Custom Swap Four",
+		description = "",
+		section = "GearSwaps",
+		position = 12
+	)
+	default boolean GearFour()
+	{
+		return false;
+	}
+	@ConfigItem(
+		keyName = "customFour",
+		name = "Execute Hotkey Four",
+		description = "",
+		position = 13,
+		section = "GearSwaps",
+		hidden = true,
+		unhide = "customswapfour"
+	)
+	default Keybind customFour()
+	{
+		return Keybind.NOT_SET;
+	}
+
+	@ConfigItem(
+		position = 14,
+		keyName = "gearfour",
+		name = "Commands to be Executed",
+		description = "Put in the IDs seperate with a comma.",
+		section = "GearSwaps",
+		hidden = true,
+		unhide = "customswapfour"
+	)
+	default String gearfour()
+	{
+		return "ID:REMOVE";
+	}
 
 }
