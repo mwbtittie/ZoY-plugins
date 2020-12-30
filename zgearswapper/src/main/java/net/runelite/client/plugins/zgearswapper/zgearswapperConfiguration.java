@@ -187,6 +187,8 @@ public interface zgearswapperConfiguration extends Config
 	{
 		return "ID:REMOVE";
 	}
+	
+	
 	@ConfigItem(
 		keyName = "customswapfour",
 		name = "Enable Custom Swap Four",
