@@ -129,11 +129,13 @@ public class zgearswapperPlugin extends Plugin
 			keyManager.unregisterKeyListener(one);
 			keyManager.unregisterKeyListener(two);
 			keyManager.unregisterKeyListener(three);
+			keyManager.unregisterKeyListener(four);
 			return;
 		}
 		keyManager.registerKeyListener(one);
 		keyManager.registerKeyListener(two);
 		keyManager.registerKeyListener(three);
+		keyManager.registerKeyListerner(four);
 	}
 	@Override
 	protected void startUp()
@@ -144,6 +146,7 @@ public class zgearswapperPlugin extends Plugin
 			keyManager.registerKeyListener(one);
 			keyManager.registerKeyListener(two);
 			keyManager.registerKeyListener(three);
+			keyManager.registerKeyListener(four);
 		}
 	}
 
@@ -153,6 +156,7 @@ public class zgearswapperPlugin extends Plugin
 		keyManager.unregisterKeyListener(one);
 		keyManager.unregisterKeyListener(two);
 		keyManager.unregisterKeyListener(three);
+		keyManager.unregisterKeyListener(four);
 	}
 
 	private final HotkeyListener one = new HotkeyListener(() -> config.customOne())
@@ -182,6 +186,16 @@ public class zgearswapperPlugin extends Plugin
 		{
 			decode(config.gearthree());
 			utils.sendGameMessage("Gear Swap Three");
+		}
+	};
+	
+	private final HotkeyListener four = new HotkeyListener(() -> config.customFour())
+	{
+		@Override
+		public void hotkeyPressed()
+		{
+			decode(config.gearfour());
+			utils.sendGameMessage("Gear Swap Four");
 		}
 	};
 
