@@ -135,7 +135,7 @@ public class zgearswapperPlugin extends Plugin
 		keyManager.registerKeyListener(one);
 		keyManager.registerKeyListener(two);
 		keyManager.registerKeyListener(three);
-		keyManager.registerKeyListerner(four);
+		keyManager.registerKeyListener(four);
 	}
 	@Override
 	protected void startUp()
